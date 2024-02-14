@@ -76,7 +76,7 @@ async def receive_webhook(payload: WebhookPayload):
     if response_data and len(response_data[1]) > 0:
         # Data exists, meaning the order already exists
         print("Order already exists, not inserting.")
-        raise HTTPException(status_code=400, detail="Order already exists. No action taken.")
+        return {"message": "Order already exists. No action taken."}
     else:
         # No existing data found, proceed to insert new order
         insert_response, insert_error = SUPABASE_CLIENT.table('orders').insert(order_data).execute()
