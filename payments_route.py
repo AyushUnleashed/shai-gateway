@@ -11,9 +11,8 @@ import json
 #                             setup the payments
 # ==========================================================================
 
-payments_router = APIRouter()
-
-@payments_router.post("/webhook/razorpay")
+from clerk_routes import webhook_router
+@webhook_router.post("/webhook/razorpay")
 async def razorpay_webhook(request: Request):
     payload = await request.json()
     print("REQUEST data received:", payload)
@@ -38,7 +37,7 @@ async def razorpay_webhook(request: Request):
     return {"message": "Webhook received and processed successfully"}
 
 
-@payments_router.post("/webhook/lemonsqueezy")
+@webhook_router.post("/webhook/lemonsqueezy")
 async def receive_webhook(request: Request, payload: WebhookPayload):
     signature = request.headers.get('x-signature')
     if not signature:
