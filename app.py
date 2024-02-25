@@ -15,7 +15,8 @@ app = FastAPI(
 
 # from routers import webhook_router, basic_router
 from clerk_routes import webhook_router
+from payments_route import payments_webhook_router
 app.include_router(webhook_router)
-# app.include_router(basic_router)
+app.include_router(payments_webhook_router)
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=5151)

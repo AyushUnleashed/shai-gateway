@@ -27,11 +27,12 @@ class OrderData:
     created_at: str
     email: str
     payment_platform: PaymentPlatform  # Assuming it's a required field without a default
+    user_id: str
     gender: Optional[Gender]  # Default to NOT_SPECIFIED or None if you prefer
     user_name: Optional[str] = ""  # Made optional with a default empty string
     user_image_link: Optional[str] = ""
     status: Status = Status.NOT_GENERATED
-    product_name: Optional[str] = ""
+    pack_type: Optional[str] = ""
     webhook_object: str = field(default_factory=lambda: "{}")
     custom_data: Optional[str] = None
     test_mode: bool = True
