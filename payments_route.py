@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException, APIRouter
 from models.webhook_model import WebhookPayload
 from lemon_squeezy_hanlder import validate_and_process_request_lemon_squeezy
-from app import get_logger
+from logger import get_logger
 from models.orders_model import OrderData, Status
 
 logger = get_logger(__name__)
@@ -51,3 +51,5 @@ async def receive_webhook(request: Request, payload: WebhookPayload):
         raise e
 
     return {"message": "Webhook received and data processed successfully."}
+
+
