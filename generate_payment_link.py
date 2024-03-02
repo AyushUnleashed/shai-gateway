@@ -6,13 +6,63 @@ load_dotenv()
 LEMONSQUEEZY_API_KEY = os.getenv('LEMONSQUEEZY_API_KEY')
 LEMONSQUEEZY_STORE_ID = os.getenv('LEMONSQUEEZY_STORE_ID')
 LEMONSQUEEZY_STANDARD_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
+RAZOR_PAY_API_KEY=os.getenv('RAZOR_PAY_API_KEY')
 
 
-def generate_razorpay_payment_link(name, email, image_link, gender):
+
+def get_razor_pay_pack_data(pack_type):
+    pack_type = pack_type.upper()
+
+    BASIC_PACK_PRICE_INR = 400
+    STANDARD_PACK_PRICE_INR = 800
+    PRO_PACK_PRICE_INR = 1200
+
+    razor_pay_inr_pack_prices = {
+        'BASIC': BASIC_PACK_PRICE_INR,
+        'STANDARD': STANDARD_PACK_PRICE_INR,
+        'PRO': PRO_PACK_PRICE_INR
+    }
+    if pack_type not in razor_pay_inr_pack_prices:
+        raise ValueError(f"Invalid pack type: {pack_type}. Valid pack types are: {list(razor_pay_inr_pack_prices.keys())}")
+    amount_in_inr = razor_pay_inr_pack_prices[pack_type]
+    amount_in_paise = amount_in_inr * 100
+    return str(amount_in_paise)
+
+def create_razor_pay_order(name, email, user_id, pack_type):
+    try:
+        pack_amount_in_paise = get_razor_pay_pack_data(pack_type)
+        import razorpay
+        RAZOR_PAY_ID = os.getenv('RAZOR_PAY_ID')
+        RAZOR_PAY_SECRET = os.getenv('RAZOR_PAY_SECRET')
+        client = razorpay.Client(auth=(RAZOR_PAY_ID, RAZOR_PAY_SECRET))
+        data = {
+            "amount": pack_amount_in_paise,
+            "currency": "INR",
+            "receipt": f"order_rcptid_{user_id}",
+            "notes": {
+                "user_name": name,
+                "email": email,
+                "user_id": user_id,
+                "pack_type": pack_type
+            }
+        }
+        order = client.order.create(data)
+        return order
+    except razorpay.errors.RazorpayError as rzp_err:
+        print(f"Razorpay error occurred: {rzp_err}")
+        raise
+    except Exception as err:
+        print(f"An error occurred: {err}")
+        raise
+
+
+
+def generate_razorpay_payment_link(name, email, user_id,pack_type):
     return None
 
 
 def get_product_id_from_pack_type(pack_type):
+    # if lemonsequeezy get from that hashmap, if razor pay get details from that map
     return LEMONSQUEEZY_STANDARD_PRODUCT_ID
 
 
@@ -64,3 +114,16 @@ def generate_lemonsqueezy_payment_link(name, email, user_id,pack_type):
         return payment_link
     else:
         raise Exception(f"Error: {response.status_code}")
+    
+
+
+if __name__ == "__main__":
+    order = create_razor_pay_order(
+        name="John Doe",
+        email="ayushyadavcodes@gmail.com",
+        user_id="123",
+        pack_type="STANDARD"
+    )
+    print("order", order)
+    print("order_id", order["id"])
+    print("notes", order["notes"])

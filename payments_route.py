@@ -14,6 +14,10 @@ import json
 from fastapi import APIRouter
 payments_webhook_router = APIRouter()
 
+from routers import basic_router
+
+from models.orders_model import PaymentPlatform
+
 @payments_webhook_router.post("/webhook/razorpay")
 async def razorpay_webhook(request: Request):
     payload = await request.json()
@@ -25,11 +29,14 @@ async def razorpay_webhook(request: Request):
     order_data = OrderData(
         order_id=payment_entity['order_id'],
         created_at=payment_entity['created_at'],
-        email=payment_entity['email'],
+        email=payment_entity['notes'].get('email', ''),
+        payment_platform=PaymentPlatform.RAZOR_PAY.value,
+        user_id=payment_entity['notes'].get('user_id', ''),
+        gender=None,
         user_name=payment_entity['notes'].get('user_name', ''),
-        gender=payment_entity['notes'].get('gender', ''),
-        user_image_link=payment_entity['notes'].get('user_image_link', ''),
-        product_name=payment_entity['notes'].get('product_name', ''),
+        user_image_link=None,
+        status= Status.NOT_GENERATED.value,
+        pack_type=payment_entity['notes'].get('pack_type', ''),
         webhook_object=json.dumps(payload),
         test_mode=True,
         custom_data=json.dumps(payment_entity['notes']),
@@ -55,3 +62,21 @@ async def receive_webhook(request: Request, payload: WebhookPayload):
     return {"message": "Webhook received and data processed successfully."}
 
 
+from pydantic import BaseModel
+
+class RazorPayOrderRequest(BaseModel):
+    name: str
+    email: str
+    user_id: str
+    pack_type: str
+
+@basic_router.post("/payments/razorpay/create_order")
+async def generate_razorpay_order(order_request: RazorPayOrderRequest):
+    from generate_payment_link import create_razor_pay_order
+    order = create_razor_pay_order(
+        order_request.name, 
+        order_request.email, 
+        order_request.user_id, 
+        order_request.pack_type
+    )
+    return order
