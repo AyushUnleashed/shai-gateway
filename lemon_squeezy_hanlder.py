@@ -40,7 +40,7 @@ async def process_lemon_squeezy_webhook(payload: WebhookPayload) -> str:
     if event_name == "order_created":
         order_data = OrderData(
             order_id=first_order_item['order_id'],
-            pack_type= custom_data.get('pack_type', '').upper(),
+            pack_type=custom_data.get('pack_type', '').upper(),
             created_at=first_order_item['created_at'],
             email=custom_data.get('email', ''),
             user_name=custom_data.get('user_name', ''),
