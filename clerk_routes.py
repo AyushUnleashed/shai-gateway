@@ -17,6 +17,8 @@ from supabase_utils import SUPABASE_CLIENT, Client
 
 
 
+
+
 from fastapi import APIRouter
 webhook_router = APIRouter()
 
@@ -103,3 +105,10 @@ def add_user_to_supabase(user: User):
         # Handle unexpected errors
         print("Unexpected error:", str(e))
         raise HTTPException(status_code=500, detail="An unexpected error occurred while inserting data into Supabase")
+
+# def get_payment_link_razorpay(pack_type):
+#     return f"https://razorpay/{pack_type}"
+#
+# def get_payment_link_lemonsqueezy(pack_type):
+#     return f"https://lemonsqueezy/{pack_type}"
+#
