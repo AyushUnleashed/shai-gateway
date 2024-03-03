@@ -13,9 +13,9 @@ RAZOR_PAY_API_KEY=os.getenv('RAZOR_PAY_API_KEY')
 def get_razor_pay_pack_data(pack_type):
     pack_type = pack_type.upper()
 
-    BASIC_PACK_PRICE_INR = 400
-    STANDARD_PACK_PRICE_INR = 800
-    PRO_PACK_PRICE_INR = 1200
+    BASIC_PACK_PRICE_INR = 820
+    STANDARD_PACK_PRICE_INR = 1640
+    PRO_PACK_PRICE_INR = 2460
 
     razor_pay_inr_pack_prices = {
         'BASIC': BASIC_PACK_PRICE_INR,
@@ -35,10 +35,10 @@ def create_razor_pay_order(name, email, user_id, pack_type):
         RAZOR_PAY_ID = os.getenv('RAZOR_PAY_ID')
         RAZOR_PAY_SECRET = os.getenv('RAZOR_PAY_SECRET')
         client = razorpay.Client(auth=(RAZOR_PAY_ID, RAZOR_PAY_SECRET))
+        print("receipt:","order_rcptid_{user_id}")
         data = {
             "amount": pack_amount_in_paise,
             "currency": "INR",
-            "receipt": f"order_rcptid_{user_id}",
             "notes": {
                 "user_name": name,
                 "email": email,
@@ -48,14 +48,19 @@ def create_razor_pay_order(name, email, user_id, pack_type):
         }
         order = client.order.create(data)
         return order
-    except razorpay.errors.RazorpayError as rzp_err:
-        print(f"Razorpay error occurred: {rzp_err}")
+    
+    except razorpay.errors.BadRequestError as err:
+        print(f"Bad Request Error: {err}")
+        raise
+    except razorpay.errors.GatewayError as err:
+        print(f"Gateway Error: {err}")
+        raise
+    except razorpay.errors.ServerError as err:
+        print(f"Server Error: {err}")
         raise
     except Exception as err:
-        print(f"An error occurred: {err}")
+        print(f"An unexpected error occurred while creating razorpay order: {err}")
         raise
-
-
 
 def generate_razorpay_payment_link(name, email, user_id,pack_type):
     return None
