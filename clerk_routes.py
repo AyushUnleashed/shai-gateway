@@ -112,24 +112,3 @@ def add_user_to_supabase(user: User):
 # def get_payment_link_lemonsqueezy(pack_type):
 #     return f"https://lemonsqueezy/{pack_type}"
 #
-
-from generate_payment_link import generate_lemonsqueezy_payment_link, generate_razorpay_payment_link
-@webhook_router.post("/payments/generate_payment_link")
-async def generate_payments_link(request: Request):
-    payload = await request.json()
-    print("REQUEST data received:", payload)
-
-    payment_platform = payload.get("payment_platform")
-    pack_type = payload.get("pack_type")
-    user_id = payload.get("user_id")
-    name = payload.get("name")
-    email = payload.get("email")
-
-    payment_link = None
-    if payment_platform == "razorpay":
-        payment_link = generate_lemonsqueezy_payment_link(name, email, user_id, pack_type)
-    elif payment_platform == "lemonsqueezy":
-        payment_link = generate_lemonsqueezy_payment_link(name, email, user_id, pack_type)
-
-    return {"payment_link": payment_link}
-

@@ -62,10 +62,6 @@ def create_razor_pay_order(name, email, user_id, pack_type):
         print(f"An unexpected error occurred while creating razorpay order: {err}")
         raise
 
-def generate_razorpay_payment_link(name, email, user_id,pack_type):
-    return None
-
-
 def get_product_id_from_pack_type(pack_type):
     # if lemonsequeezy get from that hashmap, if razor pay get details from that map
     return LEMONSQUEEZY_STANDARD_PRODUCT_ID

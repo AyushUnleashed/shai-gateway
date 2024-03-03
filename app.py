@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
@@ -11,6 +11,20 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+)
+
+# List your frontend domain(s) here
+origins = [
+    "http://localhost:3000",
+    "https://superheroai.com",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # This allows all methods, including OPTIONS
+    allow_headers=["*"],
 )
 
 # from routers import webhook_router, basic_router
