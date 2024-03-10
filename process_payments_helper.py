@@ -6,6 +6,7 @@ load_dotenv()
 LEMONSQUEEZY_API_KEY = os.getenv('LEMONSQUEEZY_API_KEY')
 LEMONSQUEEZY_STORE_ID = os.getenv('LEMONSQUEEZY_STORE_ID')
 LEMONSQUEEZY_STANDARD_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
+LEMONSUEEZY_FRONTEND_REDIRECT_URL=os.getenv('LEMONSUEEZY_FRONTEND_REDIRECT_URL')
 RAZOR_PAY_API_KEY=os.getenv('RAZOR_PAY_API_KEY')
 
 
@@ -89,6 +90,9 @@ def generate_lemonsqueezy_payment_link(name, email, user_id,pack_type):
                         "user_id": user_id,
                         "pack_type": pack_type
                     }
+                },
+                "product_options": {
+                    "redirect_url": LEMONSUEEZY_FRONTEND_REDIRECT_URL
                 }
             },
             "relationships": {
