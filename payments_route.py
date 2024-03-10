@@ -132,3 +132,31 @@ async def validate_razorpay_payment(validation_request: RazorPayValidationReques
     except razorpay.errors.SignatureVerificationError as e:
         logger.error(f"Signature verification failed: {e}")
         raise HTTPException(status_code=400, detail="Signature verification failed.")
+
+
+from supabase_utils import SUPABASE_CLIENT
+supabase = SUPABASE_CLIENT
+
+@basic_router.post("/update_paid_user_db")
+async def update_paid_user_db(request: Request):
+    payload = await request.json()
+    logger.info(payload)
+    order_id = payload.get("order_id")
+    user_id = payload.get("user_id")
+    gender = payload.get("gender")
+
+    # Get image link from Supabase Storage
+    image_path = f"{user_id}/{order_id}.png"
+    image_link = supabase.storage.from_('paid-user-images').get_public_url(image_path)
+
+    # Update orders table with image link and gender
+    orders_table = supabase.table('orders')
+    update_response = orders_table.update({
+        'user_image_link': image_link,
+        'gender': gender,
+        'status': 'GENERATING'
+    }).eq('order_id', order_id).execute()
+
+    if update_response.count is not None:
+        raise HTTPException(status_code=400, detail=f"Failed to update order: {update_response.count}")
+    return {"message": "Order updated successfully", "image_link": image_link}
