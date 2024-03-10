@@ -17,6 +17,7 @@ app = FastAPI(
 origins = [
     "http://localhost:3000",
     "https://superheroai.com",
+    "https://superheroai-git-dev-ayushyadavcodes-gmailcoms-projects.vercel.app"
 ]
 
 app.add_middleware(
