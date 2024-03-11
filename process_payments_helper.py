@@ -6,10 +6,9 @@ load_dotenv()
 LEMONSQUEEZY_API_KEY = os.getenv('LEMONSQUEEZY_API_KEY')
 LEMONSQUEEZY_STORE_ID = os.getenv('LEMONSQUEEZY_STORE_ID')
 LEMONSQUEEZY_STANDARD_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
-LEMONSUEEZY_FRONTEND_REDIRECT_URL=os.getenv('LEMONSUEEZY_FRONTEND_REDIRECT_URL')
 RAZOR_PAY_API_KEY=os.getenv('RAZOR_PAY_API_KEY')
 
-
+from configuration import CONFIG
 
 def get_razor_pay_pack_data(pack_type):
     pack_type = pack_type.upper()
@@ -76,6 +75,7 @@ def get_product_id_from_pack_type(pack_type):
 
 def generate_lemonsqueezy_payment_link(name, email, user_id,pack_type):
 
+    redirect_url = CONFIG.lemonsqueezy_frontend_redirect_url
     product_id = get_product_id_from_pack_type(pack_type)
     url = "https://api.lemonsqueezy.com/v1/checkouts"
     headers = {
@@ -98,7 +98,7 @@ def generate_lemonsqueezy_payment_link(name, email, user_id,pack_type):
                     }
                 },
                 "product_options": {
-                    "redirect_url": LEMONSUEEZY_FRONTEND_REDIRECT_URL
+                    "redirect_url": redirect_url
                 }
             },
             "relationships": {

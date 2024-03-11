@@ -89,8 +89,11 @@ async def receive_webhook(request: Request, payload: WebhookPayload):
 
 
 from process_payments_helper import generate_lemonsqueezy_payment_link, create_razor_pay_order
+from configuration import CONFIG
 @basic_router.post("/payments/generate_payment_link")
 async def process_payments(request: Request):
+    origin = request.headers.get("origin")
+    CONFIG.lemonsqueezy_frontend_redirect_url = f"{origin}/my_orders"
     payload = await request.json()
     print("REQUEST data received:", payload)
 
