@@ -9,7 +9,7 @@ from pydantic import BaseModel, EmailStr, HttpUrl
 from models.clerk_webhook_model import ClerkWebhookPayload
 from models.user_model import User
 from supabase_utils import SUPABASE_CLIENT, Client
-
+from config import settings
 # ==========================================================================
 #                             setup the clerk webhook routes
 # ==========================================================================
@@ -24,8 +24,11 @@ webhook_router = APIRouter()
 
 
 @webhook_router.post("/webhook/clerk")
-async def read_webhook_data(request: Request):
+async def read_webhook_data(request: Request, test_mode: bool = True):
     try:
+        # Set the test mode based on the endpoint hit
+        settings.IS_TEST_MODE = test_mode
+
         data = await request.json()
         payload = ClerkWebhookPayload(**data)
 
@@ -39,23 +42,26 @@ async def read_webhook_data(request: Request):
                 # The following fields are just placeholders as I don't have the actual payload structure for them
                 credits=1,  # You would replace None with the actual credits info from payload
                 orders_array=[],  # Replace None with the actual orders info from payload
-                gender=None  # Replace None with the actual gender info from payload
+                gender=None,  # Replace None with the actual gender info from payload
+                test_mode=settings.IS_TEST_MODE
             )
             # Process the extracted information as needed
             print(user)
-            #print(" This is me printing shit")
             add_user_to_supabase(user)
             return {"success": "User created event processed.", "user_info": user}
 
-            # Check if the event is user.created
         if payload.type == 'user.deleted':
-            user_to_be_deleted_id:str = payload.data.id
+            user_to_be_deleted_id: str = payload.data.id
             delete_user_from_supabase(user_to_be_deleted_id)
             print(user_to_be_deleted_id)
 
         return {"success": "Webhook received, but no action taken for this event type."}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error processing webhook data: {e}")
+
+@webhook_router.post("/webhook/clerk/prod")
+async def read_webhook_data_prod(request: Request):
+    return await read_webhook_data(request, test_mode=False)
 
 
 def delete_user_from_supabase(user_to_be_deleted_id: str):
@@ -86,6 +92,7 @@ def add_user_to_supabase(user: User):
             "orders_array": user.orders_array,
             "gender": user.gender,
             "credits": user.credits,
+            "test_mode":user.test_mode
         }
         response, insert_error = SUPABASE_CLIENT.table('users').upsert(user_data).execute()
         print("response: {}".format(response))

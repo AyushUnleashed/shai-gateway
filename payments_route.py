@@ -120,14 +120,14 @@ async def process_payments(request: Request):
         if not all([payment_platform, pack_type, user_id, name, email]):
             raise HTTPException(status_code=400, detail="Missing payment information in the request.")
 
-        if payment_platform == "razorpay":
+        if payment_platform == "RAZORPAY":
             try:
                 order_details = create_razor_pay_order(name, email, user_id, pack_type)
                 return order_details
             except Exception as e:
                 logger.error(f"Failed to create Razorpay order: {e}")
                 raise HTTPException(status_code=500, detail="Failed to create Razorpay order.")
-        elif payment_platform == "lemonsqueezy":
+        elif payment_platform == "LEMONSQUEEZY":
             try:
                 payment_link = generate_lemonsqueezy_payment_link(name, email, user_id, pack_type)
                 return {"payment_link": payment_link}

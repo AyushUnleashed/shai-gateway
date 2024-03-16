@@ -13,7 +13,7 @@ class Settings:
             cls._instance.SUPABASE_KEY = os.getenv('SUPABASE_KEY')
             cls._instance.SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY')
             cls._instance.RAZOR_PAY_ID = os.getenv('RAZOR_PAY_ID')
-            cls._instance.IS_TEST_MODE = os.getenv('IS_TEST_MODE')
+            cls._instance.IS_TEST_MODE = os.getenv('IS_TEST_MODE', 'False').lower() in ('true', '1', 't')
             cls._instance.LEMONSQUEEZY_BASIC_TEST_PRODUCT_ID = os.getenv('LEMONSQUEEZY_BASIC_TEST_PRODUCT_ID')
             cls._instance.LEMONSQUEEZY_STANDARD_TEST_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_TEST_PRODUCT_ID')
             cls._instance.LEMONSQUEEZY_PRO_TEST_PRODUCT_ID = os.getenv('LEMONSQUEEZY_PRO_TEST_PRODUCT_ID')
@@ -21,8 +21,17 @@ class Settings:
             cls._instance.LEMONSQUEEZY_STANDARD_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
             cls._instance.LEMONSQUEEZY_PRO_PRODUCT_ID = os.getenv('LEMONSQUEEZY_PRO_PRODUCT_ID')
             cls._instance.is_razor_pay_test_mode = True if cls._instance.RAZOR_PAY_ID.startswith('rzp_test') else False
+            cls._instance.is_clerk_test_mode:bool
         return cls._instance
 
     
 settings = Settings()
-settings.is_razor_pay_test_mode = True if settings.RAZOR_PAY_ID.startswith('rzp_test') else False
+print(settings.LEMONSQUEEZY_BASIC_PRODUCT_ID)
+# settings.is_razor_pay_test_mode = True if settings.RAZOR_PAY_ID.startswith('rzp_test') else False
+
+# print("RUNNNNNNNNNNONG")
+# if settings.IS_TEST_MODE == "True":
+#     settings.IS_TEST_MODE = True
+# elif settings.IS_TEST_MODE == "False":
+#     settings.IS_TEST_MODE = False
+
