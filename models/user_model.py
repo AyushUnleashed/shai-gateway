@@ -8,3 +8,4 @@ class User(BaseModel):
     orders_array: Optional[List[str]]
     user_image_link: Optional[HttpUrl]
     gender: Optional[str]
+    test_mode:bool
