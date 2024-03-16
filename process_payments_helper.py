@@ -63,15 +63,23 @@ def create_razor_pay_order(name, email, user_id, pack_type):
         raise
 
 def get_product_id_from_pack_type(pack_type):
+    from config import settings
     pack_type = pack_type.upper()
-    if pack_type == 'BASIC':
-        return os.getenv('LEMONSQUEEZY_BASIC_PRODUCT_ID')
-    elif pack_type == 'STANDARD':
-        return os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
-    elif pack_type == 'PRO':
-        return os.getenv('LEMONSQUEEZY_PRO_PRODUCT_ID')
+    if settings.IS_TEST_MODE:
+        if pack_type == 'BASIC':
+            return settings.LEMONSQUEEZY_BASIC_TEST_PRODUCT_ID
+        elif pack_type == 'STANDARD':
+            return settings.LEMONSQUEEZY_STANDARD_TEST_PRODUCT_ID
+        elif pack_type == 'PRO':
+            return settings.LEMONSQUEEZY_PRO_TEST_PRODUCT_ID
     else:
-        raise ValueError(f"Invalid pack type: {pack_type}")
+        if pack_type == 'BASIC':
+            return settings.LEMONSQUEEZY_BASIC_PRODUCT_ID
+        elif pack_type == 'STANDARD':
+            return settings.LEMONSQUEEZY_STANDARD_PRODUCT_ID
+        elif pack_type == 'PRO':
+            return settings.LEMONSQUEEZY_PRO_PRODUCT_ID
+    raise ValueError(f"Invalid pack type: {pack_type}")
 
 def generate_lemonsqueezy_payment_link(name, email, user_id,pack_type):
 
