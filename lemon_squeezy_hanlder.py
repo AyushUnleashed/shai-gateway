@@ -9,6 +9,7 @@ from config import settings
 import hmac
 from typing import Tuple
 from logger import get_logger
+from slackbot import SHAI_Slack_Bot
 
 logger = get_logger(__name__)
 import json
@@ -58,6 +59,11 @@ async def process_lemon_squeezy_webhook(payload: WebhookPayload) -> str:
         if exists:
             return "Order already exists. No action taken."
         await insert_new_order(order_data.__dict__)
+
+        await SHAI_Slack_Bot.send_message(
+            f"LemonSqueezy Payment done:\n  user ID: {order_data.user_id} \n email: {order_data.email} \n order created with ID: {order_data.order_id}"
+        )
+
         return "Webhook received and data processed successfully."
 
     return "Webhook received and no action taken."
