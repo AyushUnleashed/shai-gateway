@@ -3,19 +3,20 @@ from models.webhook_model import WebhookPayload
 from lemon_squeezy_hanlder import validate_and_process_request_lemon_squeezy
 from logger import get_logger
 from models.orders_model import OrderData, Status
+from slackbot import SHAI_Slack_Bot
 
 logger = get_logger(__name__)
 import json
 import razorpay
 import os
-
+from urllib.parse import urlparse
 # ==========================================================================
 #                             setup the payments
 # ==========================================================================
 
 from fastapi import APIRouter
 payments_webhook_router = APIRouter()
-
+from config import settings
 from routers import basic_router
 
 from models.orders_model import PaymentPlatform
@@ -41,7 +42,7 @@ async def razorpay_webhook(request: Request):
             status= Status.NOT_GENERATED.value,
             pack_type=payment_entity['notes'].get('pack_type', '').upper(),
             webhook_object=json.dumps(payload),
-            test_mode=True,
+            test_mode=settings.is_razor_pay_test_mode,
             custom_data=json.dumps(payment_entity['notes']),
         )
         try:
@@ -92,23 +93,55 @@ from process_payments_helper import generate_lemonsqueezy_payment_link, create_r
 from configuration import CONFIG
 @basic_router.post("/payments/generate_payment_link")
 async def process_payments(request: Request):
-    origin = request.headers.get("origin")
-    CONFIG.lemonsqueezy_frontend_redirect_url = f"{origin}/my_orders"
-    payload = await request.json()
-    print("REQUEST data received:", payload)
+    try:
+        # Extract 'Origin' header from the request
+        origin = request.headers.get("origin")
+        
+        # If 'Origin' is not present, try to extract the base URL from the 'Referer' header
+        if not origin:
+            referer = request.headers.get("referer")
+            if referer:
+                parsed_referer = urlparse(referer)
+                origin = f"{parsed_referer.scheme}://{parsed_referer.netloc}"
+            else:
+                # If neither 'Origin' nor 'Referer' header is present, raise an error
+                raise HTTPException(status_code=400, detail="Origin is missing and Referer header cannot be used.")
+        
+        CONFIG.lemonsqueezy_frontend_redirect_url = f"{origin}/my_orders"
+        payload = await request.json()
+        print("REQUEST data received:", payload)
 
-    payment_platform = payload.get("payment_platform")
-    pack_type = payload.get("pack_type")
-    user_id = payload.get("user_id")
-    name = payload.get("name")
-    email = payload.get("email")
+        payment_platform = payload.get("payment_platform")
+        pack_type = payload.get("pack_type")
+        user_id = payload.get("user_id")
+        name = payload.get("name")
+        email = payload.get("email")
 
-    if payment_platform == "razorpay":
-        order_details = create_razor_pay_order(name, email, user_id, pack_type)
-        return order_details
-    elif payment_platform == "lemonsqueezy":
-        payment_link = generate_lemonsqueezy_payment_link(name, email, user_id, pack_type)
-        return {"payment_link": payment_link}
+        if not all([payment_platform, pack_type, user_id, name, email]):
+            raise HTTPException(status_code=400, detail="Missing payment information in the request.")
+
+        if payment_platform == "razorpay":
+            try:
+                order_details = create_razor_pay_order(name, email, user_id, pack_type)
+                return order_details
+            except Exception as e:
+                logger.error(f"Failed to create Razorpay order: {e}")
+                raise HTTPException(status_code=500, detail="Failed to create Razorpay order.")
+        elif payment_platform == "lemonsqueezy":
+            try:
+                payment_link = generate_lemonsqueezy_payment_link(name, email, user_id, pack_type)
+                return {"payment_link": payment_link}
+            except Exception as e:
+                logger.error(f"Failed to generate LemonSqueezy payment link: {e}")
+                raise HTTPException(status_code=500, detail="Failed to generate LemonSqueezy payment link.")
+        else:
+            raise HTTPException(status_code=400, detail="Invalid payment platform specified.")
+    except HTTPException as http_exc:
+        logger.error(f"An unexpected http error occurred: {http_exc}")
+        raise http_exc
+    except Exception as exc:
+        logger.error(f"An unexpected error occurred: {exc}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
 from pydantic import BaseModel
 
@@ -162,4 +195,6 @@ async def update_paid_user_db(request: Request):
 
     if update_response.count is not None:
         raise HTTPException(status_code=400, detail=f"Failed to update order: {update_response.count}")
+    
+    await SHAI_Slack_Bot.send_message(f"Update Successful: \n User ID: {user_id},\n Order ID: {order_id},\n Image Link: {image_link},\n Gender: {gender},\n Status: 'GENERATING'")
     return {"message": "Order updated successfully", "image_link": image_link}
