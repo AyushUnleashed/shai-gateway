@@ -13,9 +13,9 @@ from configuration import CONFIG
 def get_razor_pay_pack_data(pack_type):
     pack_type = pack_type.upper()
 
-    BASIC_PACK_PRICE_INR = 820
-    STANDARD_PACK_PRICE_INR = 1640
-    PRO_PACK_PRICE_INR = 2460
+    BASIC_PACK_PRICE_INR = 415
+    STANDARD_PACK_PRICE_INR = 830
+    PRO_PACK_PRICE_INR = 1245
 
     razor_pay_inr_pack_prices = {
         'BASIC': BASIC_PACK_PRICE_INR,
