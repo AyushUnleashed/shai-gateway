@@ -20,6 +20,8 @@ class Settings:
             cls._instance.LEMONSQUEEZY_BASIC_PRODUCT_ID = os.getenv('LEMONSQUEEZY_BASIC_PRODUCT_ID')
             cls._instance.LEMONSQUEEZY_STANDARD_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
             cls._instance.LEMONSQUEEZY_PRO_PRODUCT_ID = os.getenv('LEMONSQUEEZY_PRO_PRODUCT_ID')
+            cls._instance.LEMONSQUEEZY_API_KEY = os.getenv('LEMONSQUEEZY_API_KEY')
+            cls._instance.LEMONSQUEEZY_API_TEST_KEY = os.getenv('LEMONSQUEEZY_API_TEST_KEY')
             cls._instance.is_razor_pay_test_mode = True if cls._instance.RAZOR_PAY_ID.startswith('rzp_test') else False
             cls._instance.is_clerk_test_mode:bool
         return cls._instance
