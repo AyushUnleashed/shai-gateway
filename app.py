@@ -16,7 +16,7 @@ app = FastAPI(
 # List your frontend domain(s) here
 origins = [
     "http://localhost:3000",
-    "https://superheroai.pro",
+    "https://www.superheroai.pro",
     "https://superheroai-git-dev-ayushyadavcodes-gmailcoms-projects.vercel.app",
     "https://superheroai-git-main-ayushyadavcodes-gmailcoms-projects.vercel.app"
 ]
