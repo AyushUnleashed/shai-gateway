@@ -183,7 +183,12 @@ async def update_paid_user_db(request: Request):
 
     # Get image link from Supabase Storage
     image_path = f"{user_id}/{order_id}.png"
-    image_link = supabase.storage.from_('paid-user-images').get_public_url(image_path)
+    curr_mode = get_current_payment_mode(order_id)
+
+    if curr_mode == "PROD":
+        image_link = supabase.storage.from_('paid-user-images').get_public_url(image_path)
+    elif curr_mode == "TEST":
+        image_link = supabase.storage.from_('test-paid-user-images').get_public_url(image_path)
 
     # Update orders table with image link and gender
     orders_table = supabase.table('orders')
@@ -192,8 +197,6 @@ async def update_paid_user_db(request: Request):
         'gender': gender,
         'status': 'GENERATING'
     }).eq('order_id', order_id).eq('user_id', user_id).execute()
-
-    curr_mode = get_current_payment_mode(order_id)
     
     await SHAI_Slack_Bot.send_message(f"{curr_mode}: \n Update Successful: \n User ID: {user_id},\n Order ID: {order_id},\n Image Link: {image_link},\n Gender: {gender},\n Status: 'GENERATING'")
     return {"message": "Order updated successfully", "image_link": image_link}
