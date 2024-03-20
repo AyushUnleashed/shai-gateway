@@ -27,9 +27,9 @@ async def razorpay_webhook(request: Request):
     print("REQUEST data received:", payload)
     # Extract major information
     event_type = payload["event"]
-    payment_entity = payload['payload']['payment']['entity']
     from utils.utils import convert_unix_to_datetime
     if event_type == "order.paid":
+        payment_entity = payload['payload']['payment']['entity']
         order_data = OrderData(
             order_id=payment_entity['order_id'],
             created_at=convert_unix_to_datetime(payment_entity['created_at']),
