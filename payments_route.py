@@ -4,7 +4,7 @@ from lemon_squeezy_hanlder import validate_and_process_request_lemon_squeezy
 from logger import get_logger
 from models.orders_model import OrderData, Status
 from slackbot import SHAI_Slack_Bot
-
+from process_payments_helper import get_current_payment_mode
 logger = get_logger(__name__)
 import json
 import razorpay
@@ -191,10 +191,17 @@ async def update_paid_user_db(request: Request):
         'user_image_link': image_link,
         'gender': gender,
         'status': 'GENERATING'
-    }).eq('order_id', order_id).execute()
+    }).eq('order_id', order_id).eq('user_id', user_id).execute()
 
-    if update_response.count is not None:
-        raise HTTPException(status_code=400, detail=f"Failed to update order: {update_response.count}")
+    curr_mode = get_current_payment_mode(order_id)
     
-    await SHAI_Slack_Bot.send_message(f"Update Successful: \n User ID: {user_id},\n Order ID: {order_id},\n Image Link: {image_link},\n Gender: {gender},\n Status: 'GENERATING'")
+    await SHAI_Slack_Bot.send_message(f"{curr_mode}: \n Update Successful: \n User ID: {user_id},\n Order ID: {order_id},\n Image Link: {image_link},\n Gender: {gender},\n Status: 'GENERATING'")
     return {"message": "Order updated successfully", "image_link": image_link}
+
+@basic_router.get("/payments/razorpay/get_razorpay_key")
+async def get_razorpay_key():
+    return {"razorpay_key": settings.RAZOR_PAY_ID}
+
+if __name__ == "__main__":
+   mode = get_current_payment_mode("2312270")
+   print("mode:", mode)
