@@ -2,17 +2,20 @@ import os
 import requests
 from dotenv import load_dotenv
 load_dotenv()
+from supabase_utils import SUPABASE_CLIENT, Client
+from fastapi import  HTTPException
+from logger import get_logger
+logger = get_logger(__name__)
 
 LEMONSQUEEZY_STORE_ID = os.getenv('LEMONSQUEEZY_STORE_ID')
 LEMONSQUEEZY_STANDARD_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
-RAZOR_PAY_API_KEY=os.getenv('RAZOR_PAY_API_KEY')
 
 from configuration import CONFIG
 
 def get_razor_pay_pack_data(pack_type):
     pack_type = pack_type.upper()
 
-    BASIC_PACK_PRICE_INR = 415
+    BASIC_PACK_PRICE_INR = 1
     STANDARD_PACK_PRICE_INR = 830
     PRO_PACK_PRICE_INR = 1245
 
@@ -162,3 +165,32 @@ if __name__ == "__main__":
     print("order", order)
     print("order_id", order["id"])
     print("notes", order["notes"])
+
+
+
+def get_current_payment_mode(order_id: str):
+    try:
+        response_tuple = SUPABASE_CLIENT.table('orders').select("test_mode").eq('order_id', order_id).execute()
+        print("response_tuple:", response_tuple)
+
+        response_data, response_error = response_tuple
+
+        # Check for response error based on the count of error messages
+        if response_error and response_error[0] == 'count' and response_error[1] is None:
+            # No error
+            error = None
+        else:
+            # Error exists
+            error = response_error
+
+        if error:
+            raise HTTPException(status_code=400, detail=f"Unexpected error querying Supabase: {error}")
+
+        print("response_data:", response_data)
+        test_mode = response_data[1][0].get("test_mode")
+        curr_mode = "TEST" if test_mode else "PROD"
+
+    except Exception as e:
+        logger.error(f"Error determining payment platform mode: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error while determining payment mode.")
+    return curr_mode
