@@ -10,23 +10,37 @@ logger = get_logger(__name__)
 LEMONSQUEEZY_STORE_ID = os.getenv('LEMONSQUEEZY_STORE_ID')
 LEMONSQUEEZY_STANDARD_PRODUCT_ID = os.getenv('LEMONSQUEEZY_STANDARD_PRODUCT_ID')
 
-from configuration import CONFIG
+def get_razor_pay_prices(pack_type):
+    response = SUPABASE_CLIENT.table('pricing').select('amount').eq('payment_platform', 'RAZOR_PAY').eq('pack_type', pack_type).execute()
+    response_data, response_error = response
+    # Check for response error based on the count of error messages
+    if response_error and response_error[0] == 'count' and response_error[1] is None:
+        # No error
+        error = None
+    else:
+        # Error exists
+        error = response_error
 
+    if error:
+        raise HTTPException(status_code=400, detail=f"Unexpected error querying Supabase: {error}")
+    
+    amount = response_data[1][0].get("amount")
+    return amount
+
+
+
+from configuration import CONFIG
 def get_razor_pay_pack_data(pack_type):
     pack_type = pack_type.upper()
 
-    BASIC_PACK_PRICE_INR = 1
-    STANDARD_PACK_PRICE_INR = 830
-    PRO_PACK_PRICE_INR = 1245
-
-    razor_pay_inr_pack_prices = {
-        'BASIC': BASIC_PACK_PRICE_INR,
-        'STANDARD': STANDARD_PACK_PRICE_INR,
-        'PRO': PRO_PACK_PRICE_INR
-    }
+    razor_pay_inr_pack_prices = [
+        'BASIC',
+        'STANDARD',
+        'PRO'
+    ]    
     if pack_type not in razor_pay_inr_pack_prices:
-        raise ValueError(f"Invalid pack type: {pack_type}. Valid pack types are: {list(razor_pay_inr_pack_prices.keys())}")
-    amount_in_inr = razor_pay_inr_pack_prices[pack_type]
+        raise ValueError(f"Invalid pack type: {pack_type}. Valid pack types are: {list(razor_pay_inr_pack_prices)}")
+    amount_in_inr = get_razor_pay_prices(pack_type)
     amount_in_paise = amount_in_inr * 100
     return str(amount_in_paise)
 
@@ -194,3 +208,7 @@ def get_current_payment_mode(order_id: str):
         logger.error(f"Error determining payment platform mode: {e}")
         raise HTTPException(status_code=500, detail="Internal server error while determining payment mode.")
     return curr_mode
+
+if __name__ =="__main__":
+    price= get_razor_pay_prices('PRO')
+    print(price)
