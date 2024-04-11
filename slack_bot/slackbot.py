@@ -3,7 +3,7 @@ import logging
 import os
 from dotenv import find_dotenv, load_dotenv
 import requests
-from logger import get_logger
+from utils.logger import get_logger
 logger = get_logger(__name__)
 # Load environment variables from the root .env file
 root_env_path = find_dotenv()

@@ -24,6 +24,7 @@ class Settings:
             cls._instance.LEMONSQUEEZY_API_TEST_KEY = os.getenv('LEMONSQUEEZY_API_TEST_KEY')
             cls._instance.is_razor_pay_test_mode = True if cls._instance.RAZOR_PAY_ID.startswith('rzp_test') else False
             cls._instance.is_clerk_test_mode:bool
+            cls._instance.lemonsqueezy_frontend_redirect_url = ""
         return cls._instance
 
     

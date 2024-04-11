@@ -1,17 +1,16 @@
-from models.webhook_model import  WebhookPayload
-from models.orders_model import OrderData, Status
 from supabase_utils import SUPABASE_CLIENT, Client
 from fastapi import HTTPException
-import hashlib
-from typing import Tuple, Dict, Any
+from typing import Dict, Any
 
-from config import settings
-import hmac
 from typing import Tuple
-from logger import get_logger
+from utils.logger import get_logger
 
 logger = get_logger(__name__)
-import json
+
+
+# ==========================================================================
+#                             handle orders db related operations
+# ==========================================================================
 
 
 
