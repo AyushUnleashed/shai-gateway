@@ -1,67 +1,17 @@
-from fastapi import FastAPI, Request, HTTPException, APIRouter
-from pydantic import BaseModel, EmailStr
-from typing import List, Optional
-from logger import get_logger
+from fastapi import HTTPException
+from utils.logger import get_logger
 logger = get_logger(__name__)
-import json
-from typing import List, Optional
-from pydantic import BaseModel, EmailStr, HttpUrl
-from models.clerk_webhook_model import ClerkWebhookPayload
 from models.user_model import User
-from supabase_utils import SUPABASE_CLIENT, Client
-from config import settings
+from supabase_utils import SUPABASE_CLIENT
 # ==========================================================================
-#                             setup the clerk webhook routes
+#                             handle user db related operations
 # ==========================================================================
-#
-
-
-
 
 
 from fastapi import APIRouter
 webhook_router = APIRouter()
 
 
-@webhook_router.post("/webhook/clerk")
-async def read_webhook_data(request: Request, test_mode: bool = True):
-    try:
-        # Set the test mode based on the endpoint hit
-        settings.IS_TEST_MODE = test_mode
-
-        data = await request.json()
-        payload = ClerkWebhookPayload(**data)
-
-        # Check if the event is user.created
-        if payload.type == 'user.created':
-            # Extract required information
-            user = User(
-                user_id=payload.data.id,
-                email=payload.data.email_addresses[0].email_address if payload.data.email_addresses else None,
-                user_image_link=payload.data.profile_image_url,
-                # The following fields are just placeholders as I don't have the actual payload structure for them
-                credits=1,  # You would replace None with the actual credits info from payload
-                orders_array=[],  # Replace None with the actual orders info from payload
-                gender=None,  # Replace None with the actual gender info from payload
-                test_mode=settings.IS_TEST_MODE
-            )
-            # Process the extracted information as needed
-            print(user)
-            add_user_to_supabase(user)
-            return {"success": "User created event processed.", "user_info": user}
-
-        if payload.type == 'user.deleted':
-            user_to_be_deleted_id: str = payload.data.id
-            delete_user_from_supabase(user_to_be_deleted_id)
-            print(user_to_be_deleted_id)
-
-        return {"success": "Webhook received, but no action taken for this event type."}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error processing webhook data: {e}")
-
-@webhook_router.post("/webhook/clerk/prod")
-async def read_webhook_data_prod(request: Request):
-    return await read_webhook_data(request, test_mode=False)
 
 
 def delete_user_from_supabase(user_to_be_deleted_id: str):
@@ -112,10 +62,3 @@ def add_user_to_supabase(user: User):
         # Handle unexpected errors
         print("Unexpected error:", str(e))
         raise HTTPException(status_code=500, detail="An unexpected error occurred while inserting data into Supabase")
-
-# def get_payment_link_razorpay(pack_type):
-#     return f"https://razorpay/{pack_type}"
-#
-# def get_payment_link_lemonsqueezy(pack_type):
-#     return f"https://lemonsqueezy/{pack_type}"
-#

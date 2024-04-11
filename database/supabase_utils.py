@@ -1,5 +1,4 @@
-import datetime
-from config import settings
+from utils.config import settings
 from supabase import create_client, Client
 
 
