@@ -29,10 +29,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# from routers import webhook_router, basic_router
-from database.handle_user_db_updates import webhook_router
+from routes.webhook_routes import webhook_router
 from routes.payments_routes import payments_router
 from routes.basic_routes import basic_router
+
 app.include_router(webhook_router)
 app.include_router(basic_router)
 app.include_router(payments_router)

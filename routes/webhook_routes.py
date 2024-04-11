@@ -10,10 +10,11 @@ import json
 from fastapi import APIRouter
 from utils.config import settings
 from models.clerk_webhook_model import ClerkWebhookPayload
-webhook_router = APIRouter()
 from database.handle_user_db_updates import add_user_to_supabase, delete_user_from_supabase
 from models.user_model import User
 
+
+webhook_router = APIRouter()
 @webhook_router.post("/webhook/razorpay")
 async def razorpay_webhook(request: Request):
     payload = await request.json()

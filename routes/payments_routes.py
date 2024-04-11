@@ -1,8 +1,8 @@
 from fastapi import Request, HTTPException
 
+from payments.process_payments_helper import get_current_payment_mode_from_order_id
 from utils.logger import get_logger
 
-from payments.process_payments_helper import get_current_payment_mode_from_order_id
 logger = get_logger(__name__)
 import razorpay
 import os
@@ -13,12 +13,12 @@ from urllib.parse import urlparse
 
 from fastapi import APIRouter
 from pydantic import BaseModel
-payments_router = APIRouter()
-
 
 from payments.lemon_squeezy_helpers import generate_lemonsqueezy_payment_link
 from payments.razory_pay_helpers import create_razor_pay_order
 from utils.config import settings
+
+payments_router = APIRouter()
 @payments_router.post("/payments/generate_payment_link")
 async def process_payments(request: Request):
     try:

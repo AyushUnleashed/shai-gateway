@@ -8,11 +8,6 @@ from supabase_utils import SUPABASE_CLIENT
 # ==========================================================================
 
 
-from fastapi import APIRouter
-webhook_router = APIRouter()
-
-
-
 
 def delete_user_from_supabase(user_to_be_deleted_id: str):
     try:
