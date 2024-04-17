@@ -1,4 +1,4 @@
-from database.supabase_utils import SUPABASE_CLIENT
+from supabase_tools.supabase_utils import SUPABASE_CLIENT
 from fastapi import HTTPException
 
 def get_razor_pay_prices_from_db(pack_type):

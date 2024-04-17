@@ -1,7 +1,7 @@
-from database.handle_orders_db_updates import check_existing_order, insert_new_order
-from database.supabase_utils import SUPABASE_CLIENT
+from supabase_tools.handle_orders_db_updates import check_existing_order, insert_new_order
+from supabase_tools.supabase_utils import SUPABASE_CLIENT
 from slack_bot.slackbot import SHAI_Slack_Bot
-from process_payments_helper import get_current_payment_mode_from_order_id
+from payments.process_payments_helper import get_current_payment_mode_from_order_id
 async def validate_and_process_request_razorpay(order_data):
     try:
         exists, _ = check_existing_order(SUPABASE_CLIENT, order_data.order_id)
