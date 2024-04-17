@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from utils.logger import get_logger
 logger = get_logger(__name__)
 from models.user_model import User
-from supabase_utils import SUPABASE_CLIENT
+from database.supabase_utils import SUPABASE_CLIENT
 # ==========================================================================
 #                             handle user db related operations
 # ==========================================================================
@@ -57,3 +57,7 @@ def add_user_to_supabase(user: User):
         # Handle unexpected errors
         print("Unexpected error:", str(e))
         raise HTTPException(status_code=500, detail="An unexpected error occurred while inserting data into Supabase")
+
+
+def get_user_email_from_user_id():
+    pass

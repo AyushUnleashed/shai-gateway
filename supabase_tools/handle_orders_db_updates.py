@@ -1,4 +1,4 @@
-from supabase_utils import SUPABASE_CLIENT, Client
+from database.supabase_utils import SUPABASE_CLIENT, Client
 from fastapi import HTTPException
 from typing import Dict, Any
 
