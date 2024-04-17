@@ -7,3 +7,5 @@ requests
 razorpay
 pytz
 pathspec
+replicate
+pillow
