@@ -5,16 +5,28 @@ from models.orders_model import PaymentPlatform
 from payments.razor_pay_webhook_handler import validate_and_process_request_razorpay
 from fastapi import Request, HTTPException
 from utils.logger import get_logger
+
 logger = get_logger(__name__)
 import json
 from fastapi import APIRouter
 from utils.config import settings
 from models.clerk_webhook_model import ClerkWebhookPayload
-from database.handle_user_db_updates import add_user_to_supabase, delete_user_from_supabase
+from supabase_tools.handle_user_db_updates import add_user_to_supabase, delete_user_from_supabase
 from models.user_model import User
+from fastapi import BackgroundTasks
 
+from supabase_tools.handle_image_tb_updates import get_image_id_user_id_from_prediction_id, \
+    update_db_with_final_image_link
+from supabase_tools.handle_image_bucket_updates import handle_supabase_upload, get_bucket_image_url
+from image_generator.replicate_face_swap_api_call import perform_face_swap_and_save_simple
+from image_generator.utils.text_box import add_text_box
+
+from slack_bot.slackbot import SHAI_FREE_IMAGE_SLACK_BOT
+import utils.constants as constants
 
 webhook_router = APIRouter()
+
+
 @webhook_router.post("/webhook/razorpay")
 async def razorpay_webhook(request: Request):
     payload = await request.json()
@@ -33,7 +45,7 @@ async def razorpay_webhook(request: Request):
             gender=None,
             user_name=payment_entity['notes'].get('user_name', ''),
             user_image_link=None,
-            status= Status.NOT_GENERATED.value,
+            status=Status.NOT_GENERATED.value,
             pack_type=payment_entity['notes'].get('pack_type', '').upper(),
             webhook_object=json.dumps(payload),
             test_mode=settings.is_razor_pay_test_mode,
@@ -45,6 +57,7 @@ async def razorpay_webhook(request: Request):
             raise e
 
     return {"message": "Webhook received and processed successfully"}
+
 
 @webhook_router.post("/webhook/lemonsqueezy")
 async def lemonsqueezy_webhook(request: Request, payload: WebhookPayload):
@@ -98,6 +111,68 @@ async def clerk_webhook(request: Request, test_mode: bool = True):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error processing webhook data: {e}")
 
+
 @webhook_router.post("/webhook/clerk/prod")
 async def clerk_webhook_prod(request: Request):
     return await clerk_webhook(request, test_mode=False)
+
+
+@webhook_router.post("/webhook/replicate")
+async def replicate_webhook(request: Request, background_tasks: BackgroundTasks):
+    # Asynchronously get JSON data from request
+    data = await request.json()
+    # # Print the JSON data for debugging purposes
+    # print("Received JSON data:", data)
+    background_tasks.add_task(process_replicate_webhook, data)
+    # Respond to the webhook
+    return {"status": "received"}
+
+
+async def process_replicate_webhook(data):
+    # get prediction id, sd image link from the webhook payload
+
+    prediction_id = data.get("id")
+    sd_image_url = data.get("output")[0]
+    user_image_link = data.get("input")["ip_image"]
+
+
+    # from prediction id get the image id, user id
+    image_id, user_id = await get_image_id_user_id_from_prediction_id(prediction_id)
+    try:
+        # call face swap with user image link and sd image link
+        face_swap_image_link, fs_image_path = await perform_face_swap_and_save_simple(
+            target_image_url=sd_image_url,
+            source_image_url=user_image_link,
+            user_id=user_id,
+            image_id=image_id)
+
+        # add text box to face swapped image
+        final_image_path = await add_text_box(fs_image_path)
+        # upload final image to supabase storage & get it's url
+        supabase_final_image_path = f"user_{user_id}/image_{image_id}.png"
+        await handle_supabase_upload(constants.FREE_IMAGE_BUCKET_NAME, final_image_path,supabase_final_image_path)
+        final_image_url = await get_bucket_image_url(bucket_name=constants.FREE_IMAGE_BUCKET_NAME,
+                                                     supabase_image_path=supabase_final_image_path)
+        # update the db with the final image link
+        await update_db_with_final_image_link(image_id,
+                                              sd_image_url=sd_image_url,
+                                              fs_image_url=face_swap_image_link,
+                                              final_image_url=final_image_url,
+                                              status=constants.SUCCESS)
+
+        await SHAI_FREE_IMAGE_SLACK_BOT.send_message(
+            f"Final Image generated and saved successfully for \n user {user_id} \n image_link: {final_image_url}")
+
+        # send image link to the user via email
+        # TODO
+        # user_email = await get_user_email_from_user_id()
+        # send_email_to_user_with_image_link(user_email, face_swap_image_link)
+    except Exception as e:
+        # update the db with failed status
+        await update_db_with_final_image_link(image_id,
+                                              sd_image_url=sd_image_url,
+                                              fs_image_url=None,
+                                              final_image_url=None,
+                                              status=constants.FAILED)
+
+        raise HTTPException(status_code=400, detail="Error processing replicate webhook data {}".format(e))

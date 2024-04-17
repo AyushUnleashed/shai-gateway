@@ -1,13 +1,15 @@
-from database.supabase_utils import SUPABASE_CLIENT
+from supabase_tools.supabase_utils import SUPABASE_CLIENT
 supabase = SUPABASE_CLIENT
-from fastapi import  Request
+from fastapi import  Request, HTTPException
 from utils.logger import get_logger
 from slack_bot.slackbot import SHAI_Slack_Bot
 from payments.process_payments_helper import get_current_payment_mode_from_order_id
 logger = get_logger(__name__)
+from supabase_tools.handle_user_db_updates import get_user_current_credits, reduce_user_credits
 
 from fastapi import APIRouter
 basic_router = APIRouter()
+from image_generator.sd_image_gen import handle_sd_image_generation
 
 @basic_router.get("/")
 async def read_root():
@@ -40,3 +42,27 @@ async def update_paid_user_order_with_details(request: Request):
 
     await SHAI_Slack_Bot.send_message(f"{curr_mode}: \n Update Successful: \n User ID: {user_id},\n Order ID: {order_id},\n Image Link: {image_link},\n Gender: {gender},\n Status: 'GENERATING'")
     return {"message": "Order updated successfully", "image_link": image_link}
+
+
+# user image generation routes for free users
+@basic_router.post("/generate_free_image")
+async def generate_free_image(request: Request):
+    payload = await request.json()
+    user_id = payload.get("user_id")
+    gender = payload.get("gender")
+    style_id = payload.get("style_id")
+    user_image_url = payload.get("user_image_url")
+
+    current_credits = await get_user_current_credits(user_id)
+    if current_credits > 0:
+        await reduce_user_credits(user_id)
+        await handle_sd_image_generation(user_id, style_id, gender, user_image_url)
+    else:
+        raise HTTPException(status_code=400, detail="Insufficient credits to generate image")
+
+@basic_router.post("/get_user_credits")
+async def get_user_credits(request: Request):
+    payload = await request.json()
+    user_id = payload.get("user_id")
+    current_credits = await get_user_current_credits(user_id)
+    return {"credits":current_credits}
