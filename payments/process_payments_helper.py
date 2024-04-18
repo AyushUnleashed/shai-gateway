@@ -1,7 +1,7 @@
 
 from dotenv import load_dotenv
 load_dotenv()
-from database.supabase_utils import SUPABASE_CLIENT
+from supabase_tools.supabase_utils import SUPABASE_CLIENT
 from fastapi import  HTTPException
 from utils.logger import get_logger
 logger = get_logger(__name__)

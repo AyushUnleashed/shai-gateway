@@ -1,0 +1,23 @@
+ {'completed_at': '2024-04-11T23:05:05.006065Z', 'created_at': '2024-04-11T23:00:11.621Z', 'error': None, 'id': 't6z55hytwnrg80cesxhvncapar', 'input': {'control_
+net_image': 'https://mvlmexldvleywcfmvzwt.supabase.co/storage/v1/object/public/paid-user-images/user_2dn0xb5utBAiH2r7f4Pm7929L7f/order_NohiIjMu5GJKHT.png', 'controlnet_conditioning
+_scale': 0, 'guidance_scale': 7.5, 'height': 512, 'ip_image': 'https://mvlmexldvleywcfmvzwt.supabase.co/storage/v1/object/public/paid-user-images/user_2dn0xb5utBAiH2r7f4Pm7929L7f/o
+rder_NohiIjMu5GJKHT.png', 'num_inference_steps': 40, 'prompt': 'Cyborg (DC Comics): High res, Cyberpunk-inspired hero, metallic enhancements seamlessly integrated with human form,
+neon-blue cybernetic lines illuminating, red cyber-eye glowing, powerful and stoic stance in a dystopian cityscape.sharp details, realistic textures, cinematic quality, realism and
+ depth,in action-packed poses, emotion and intensity, photorealistic, ultra hd, 8k', 'width': 512}, 'logs': "Using seed: 5197\nToken indices sequence length is longer than the spec
+ified maximum sequence length for this model (81 > 77). Running this sequence through the model will result in indexing errors\nThe following part of your input was truncated becau
+se CLIP can only handle sequences up to 77 tokens: ['hd, 8 k']\n  0%|          | 0/40 [00:00<?, ?it/s]\n  2%|▎         | 1/40 [00:00<00:17,  2.28it/s]\n  5%|▌         | 2/40 [00:00
+<00:11,  3.44it/s]\n  8%|▊         | 3/40 [00:00<00:08,  4.11it/s]\n 10%|█         | 4/40 [00:00<00:07,  4.53it/s]\n 12%|█▎        | 5/40 [00:01<00:07,  4.79it/s]\n 15%|█▌        |
+ 6/40 [00:01<00:06,  4.90it/s]\n 18%|█▊        | 7/40 [00:01<00:06,  5.01it/s]\n 20%|██        | 8/40 [00:01<00:06,  5.11it/s]\n 22%|██▎       | 9/40 [00:01<00:05,  5.18it/s]\n 25%
+|██▌       | 10/40 [00:02<00:05,  5.24it/s]\n 28%|██▊       | 11/40 [00:02<00:05,  5.26it/s]\n 30%|███       | 12/40 [00:02<00:05,  5.26it/s]\n 32%|███▎      | 13/40 [00:02<00:05,
+ 5.26it/s]\n 35%|███▌      | 14/40 [00:02<00:04,  5.25it/s]\n 38%|███▊      | 15/40 [00:03<00:04,  5.27it/s]\n 40%|████      | 16/40 [00:03<00:04,  5.30it/s]\n 42%|████▎     | 17/4
+0 [00:03<00:04,  5.29it/s]\n 45%|████▌     | 18/40 [00:03<00:04,  5.30it/s]\n 48%|████▊     | 19/40 [00:03<00:03,  5.29it/s]\n 50%|█████     | 20/40 [00:04<00:03,  5.27it/s]\n 52%|
+█████▎    | 21/40 [00:04<00:03,  5.26it/s]\n 55%|█████▌    | 22/40 [00:04<00:03,  5.28it/s]\n 57%|█████▊    | 23/40 [00:04<00:03,  5.32it/s]\n 60%|██████    | 24/40 [00:04<00:03,
+5.29it/s]\n 62%|██████▎   | 25/40 [00:04<00:02,  5.29it/s]\n 65%|██████▌   | 26/40 [00:05<00:02,  5.27it/s]\n 68%|██████▊   | 27/40 [00:05<00:02,  5.27it/s]\n 70%|███████   | 28/40
+ [00:05<00:02,  5.27it/s]\n 72%|███████▎  | 29/40 [00:05<00:02,  5.26it/s]\n 75%|███████▌  | 30/40 [00:05<00:01,  5.27it/s]\n 78%|███████▊  | 31/40 [00:06<00:01,  5.26it/s]\n 80%|█
+███████  | 32/40 [00:06<00:01,  5.26it/s]\n 82%|████████▎ | 33/40 [00:06<00:01,  5.27it/s]\n 85%|████████▌ | 34/40 [00:06<00:01,  5.27it/s]\n 88%|████████▊ | 35/40 [00:06<00:00,  5
+.27it/s]\n 90%|█████████ | 36/40 [00:07<00:00,  5.25it/s]\n 92%|█████████▎| 37/40 [00:07<00:00,  5.26it/s]\n 95%|█████████▌| 38/40 [00:07<00:00,  5.26it/s]\n 98%|█████████▊| 39/40
+[00:07<00:00,  5.25it/s]\n100%|██████████| 40/40 [00:07<00:00,  5.26it/s]\n100%|██████████| 40/40 [00:07<00:00,  5.11it/s]\n", 'metrics': {'predict_time': 17.748825}, 'model': 'ayu
+shunleashed/super-hero-ai', 'output': ['https://replicate.delivery/pbxt/LC1yKF6w2wJTNpYg6hsHCaU5eIkJFnTuhIKpKnY0WNFQ9wUJA/out-0.png'], 'started_at': '2024-04-11T23:04:47.25724Z', '
+status': 'succeeded', 'urls': {'cancel': 'https://api.replicate.com/v1/predictions/t6z55hytwnrg80cesxhvncapar/cancel', 'get': 'https://api.replicate.com/v1/predictions/t6z55hytwnrg
+80cesxhvncapar'}, 'version': '1dddf6ccc0961b68e4660a1d2b159e05a2975931ce89fc0c6cef255c95114ffd', 'webhook': 'https://brave-happily-wahoo.ngrok-free.app/webhook/replicate', 'webhook
+_events_filter': ['start', 'completed']}

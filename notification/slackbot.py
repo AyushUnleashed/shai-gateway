@@ -10,6 +10,7 @@ root_env_path = find_dotenv()
 load_dotenv(root_env_path)
 
 SLACKBOT_WEBHOOK_URL = os.getenv("SLACKBOT_WEBHOOK_URL")
+SLACKBOT_FREE_IMAGE_WEBHOOK_URL = os.getenv("SLACKBOT_FREE_IMAGE_WEBHOOK_URL")
 
 class SlackBot:
     def __init__(self, webhook_url: str) -> None:
@@ -31,6 +32,7 @@ class SlackBot:
 
 
 SHAI_Slack_Bot = SlackBot(SLACKBOT_WEBHOOK_URL)
+SHAI_FREE_IMAGE_SLACK_BOT = SlackBot(SLACKBOT_FREE_IMAGE_WEBHOOK_URL)
 
 if __name__ == "__main__":
     asyncio.run(SHAI_Slack_Bot.send_message("sending test message from script"))

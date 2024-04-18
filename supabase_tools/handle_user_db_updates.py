@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from utils.logger import get_logger
 logger = get_logger(__name__)
 from models.user_model import User
-from supabase_utils import SUPABASE_CLIENT
+from supabase_tools.supabase_utils import SUPABASE_CLIENT
 # ==========================================================================
 #                             handle user db related operations
 # ==========================================================================
@@ -57,3 +57,36 @@ def add_user_to_supabase(user: User):
         # Handle unexpected errors
         print("Unexpected error:", str(e))
         raise HTTPException(status_code=500, detail="An unexpected error occurred while inserting data into Supabase")
+
+
+
+## Credits section
+
+async def get_user_current_credits(user_id) -> int:
+    try:
+        response = SUPABASE_CLIENT.table('users').select('credits').eq('user_id', user_id).execute()
+        credits = int(response.data[0]['credits'])
+        return credits
+    except Exception as e:
+        raise Exception(f"Failed to check user credits: {e}")
+
+async def reduce_user_credits(user_id):
+    try:
+        current_credits = await get_user_current_credits(user_id)
+
+        if current_credits > 0:
+            new_credits = current_credits - 1
+            response = SUPABASE_CLIENT.table('users').update({'credits': new_credits}).eq('user_id', user_id).execute()
+        else:
+            raise Exception("Can't reduce credits below 0.")
+    except Exception as e:
+        raise Exception(f"Failed to reduce image generation credits: {e}")
+
+
+async def get_user_email_from_user_id(user_id: str) -> str:
+    try:
+        response = SUPABASE_CLIENT.table('users').select('email').eq('user_id', user_id).execute()
+        email = str(response.data[0]['email'])
+        return email
+    except Exception as e:
+        raise Exception(f"Failed to check user credits: {e}")

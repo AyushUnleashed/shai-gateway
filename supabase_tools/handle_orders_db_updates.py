@@ -1,4 +1,4 @@
-from supabase_utils import SUPABASE_CLIENT, Client
+from supabase_tools.supabase_utils import SUPABASE_CLIENT, Client
 from fastapi import HTTPException
 from typing import Dict, Any
 
@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 
 def check_existing_order(supabase_client: Client, order_id: str) -> Tuple[bool, Dict[str, Any]]:
     """
-    Check if an order already exists in the database.
+    Check if an order already exists in the supabase_tools.
 
     Args:
         supabase_client (Client): Initialized Supabase client.
@@ -44,7 +44,7 @@ def check_existing_order(supabase_client: Client, order_id: str) -> Tuple[bool, 
 
 async def insert_new_order( order_data: Dict[str, Any]) -> None:
     """
-    Inserts a new order into the database.
+    Inserts a new order into the supabase_tools.
 
     Args:
         supabase_client (Client): Initialized Supabase client.
