@@ -2,7 +2,7 @@ from supabase_tools.supabase_utils import SUPABASE_CLIENT
 supabase = SUPABASE_CLIENT
 from fastapi import  Request, HTTPException
 from utils.logger import get_logger
-from slack_bot.slackbot import SHAI_Slack_Bot
+from notification.slackbot import SHAI_Slack_Bot
 from payments.process_payments_helper import get_current_payment_mode_from_order_id
 logger = get_logger(__name__)
 from supabase_tools.handle_user_db_updates import get_user_current_credits, reduce_user_credits

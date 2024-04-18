@@ -8,7 +8,7 @@ from utils.config import settings
 import hmac
 from typing import Tuple
 from utils.logger import get_logger
-from slack_bot.slackbot import SHAI_Slack_Bot
+from notification.slackbot import SHAI_Slack_Bot
 from payments.process_payments_helper import get_current_payment_mode_from_order_id
 logger = get_logger(__name__)
 import json

@@ -8,6 +8,7 @@ class Settings:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(Settings, cls).__new__(cls)
+            cls._instance.GOOGLE_APP_PASSWORD = os.getenv('GOOGLE_APP_PASSWORD')
             cls._instance.LEMONSQUEEZY_WEBHOOK_SECRET = os.getenv('LEMONSQUEEZY_WEBHOOK_SECRET')
             cls._instance.SUPABASE_URL = os.getenv('SUPABASE_URL')
             cls._instance.SUPABASE_KEY = os.getenv('SUPABASE_KEY')
