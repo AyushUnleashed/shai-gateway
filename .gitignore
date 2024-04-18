@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+#custom
+image_generator/user_content/*
+
 # my app
 
 .idea/

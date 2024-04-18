@@ -1,23 +1,22 @@
 from models.webhook_model import WebhookPayload
 from models.orders_model import OrderData, Status
-from supabase_utils import SUPABASE_CLIENT, Client
+from supabase_tools.supabase_utils import SUPABASE_CLIENT
 from fastapi import HTTPException
 import hashlib
-from typing import Tuple, Dict, Any
-from webhook_supabase_handler import check_existing_order, insert_new_order
-from config import settings
+from supabase_tools.handle_orders_db_updates import check_existing_order, insert_new_order
+from utils.config import settings
 import hmac
 from typing import Tuple
-from logger import get_logger
-from slackbot import SHAI_Slack_Bot
-from process_payments_helper import get_current_payment_mode
+from utils.logger import get_logger
+from notification.slackbot import SHAI_Slack_Bot
+from payments.process_payments_helper import get_current_payment_mode_from_order_id
 logger = get_logger(__name__)
 import json
 
 from models.orders_model import PaymentPlatform
 
 
-def verify_signature(body: bytes, signature: str) -> bool:
+def verify_lemonsqueezy_signature(body: bytes, signature: str) -> bool:
     secret = settings.LEMONSQUEEZY_WEBHOOK_SECRET.encode()
     digest = hmac.new(secret, body, hashlib.sha256).hexdigest()
     return hmac.compare_digest(digest, signature)
@@ -60,7 +59,7 @@ async def process_lemon_squeezy_webhook(payload: WebhookPayload) -> str:
             return "Order already exists. No action taken."
         await insert_new_order(order_data.__dict__)
 
-        curr_mode = get_current_payment_mode(order_data.order_id)
+        curr_mode = get_current_payment_mode_from_order_id(order_data.order_id)
         await SHAI_Slack_Bot.send_message(
             f"{curr_mode} :\n LemonSqueezy Payment done:\n  user ID: {order_data.user_id} \n email: {order_data.email} \n order created with ID: {order_data.order_id}"
         )
@@ -72,7 +71,7 @@ async def process_lemon_squeezy_webhook(payload: WebhookPayload) -> str:
 
 async def validate_and_process_request_lemon_squeezy(body: bytes, signature: str, payload: WebhookPayload) -> Tuple[
     bool, str]:
-    if not verify_signature(body, signature):
+    if not verify_lemonsqueezy_signature(body, signature):
         logger.error("Invalid signature.")
         raise HTTPException(status_code=400, detail="Invalid signature.")
 

@@ -1,23 +1,22 @@
-from models.webhook_model import  WebhookPayload
-from models.orders_model import OrderData, Status
-from supabase_utils import SUPABASE_CLIENT, Client
+from supabase_tools.supabase_utils import SUPABASE_CLIENT, Client
 from fastapi import HTTPException
-import hashlib
-from typing import Tuple, Dict, Any
+from typing import Dict, Any
 
-from config import settings
-import hmac
 from typing import Tuple
-from logger import get_logger
+from utils.logger import get_logger
 
 logger = get_logger(__name__)
-import json
+
+
+# ==========================================================================
+#                             handle orders db related operations
+# ==========================================================================
 
 
 
 def check_existing_order(supabase_client: Client, order_id: str) -> Tuple[bool, Dict[str, Any]]:
     """
-    Check if an order already exists in the database.
+    Check if an order already exists in the supabase_tools.
 
     Args:
         supabase_client (Client): Initialized Supabase client.
@@ -45,7 +44,7 @@ def check_existing_order(supabase_client: Client, order_id: str) -> Tuple[bool, 
 
 async def insert_new_order( order_data: Dict[str, Any]) -> None:
     """
-    Inserts a new order into the database.
+    Inserts a new order into the supabase_tools.
 
     Args:
         supabase_client (Client): Initialized Supabase client.

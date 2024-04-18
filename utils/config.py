@@ -8,6 +8,7 @@ class Settings:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(Settings, cls).__new__(cls)
+            cls._instance.GOOGLE_APP_PASSWORD = os.getenv('GOOGLE_APP_PASSWORD')
             cls._instance.LEMONSQUEEZY_WEBHOOK_SECRET = os.getenv('LEMONSQUEEZY_WEBHOOK_SECRET')
             cls._instance.SUPABASE_URL = os.getenv('SUPABASE_URL')
             cls._instance.SUPABASE_KEY = os.getenv('SUPABASE_KEY')
@@ -24,6 +25,7 @@ class Settings:
             cls._instance.LEMONSQUEEZY_API_TEST_KEY = os.getenv('LEMONSQUEEZY_API_TEST_KEY')
             cls._instance.is_razor_pay_test_mode = True if cls._instance.RAZOR_PAY_ID.startswith('rzp_test') else False
             cls._instance.is_clerk_test_mode:bool
+            cls._instance.lemonsqueezy_frontend_redirect_url = ""
         return cls._instance
 
     
