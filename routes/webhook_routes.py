@@ -11,7 +11,7 @@ import json
 from fastapi import APIRouter
 from utils.config import settings
 from models.clerk_webhook_model import ClerkWebhookPayload
-from supabase_tools.handle_user_db_updates import add_user_to_supabase, delete_user_from_supabase
+from supabase_tools.handle_user_db_updates import add_user_to_supabase, delete_user_from_supabase, get_user_email_from_user_id
 from models.user_model import User
 from fastapi import BackgroundTasks
 
@@ -21,7 +21,8 @@ from supabase_tools.handle_image_bucket_updates import handle_supabase_upload, g
 from image_generator.replicate_face_swap_api_call import perform_face_swap_and_save_simple
 from image_generator.utils.text_box import add_text_box
 
-from slack_bot.slackbot import SHAI_FREE_IMAGE_SLACK_BOT
+from notification.slackbot import SHAI_FREE_IMAGE_SLACK_BOT
+from notification.gmail_service import send_image_via_gmail
 import utils.constants as constants
 
 webhook_router = APIRouter()
@@ -140,7 +141,7 @@ async def process_replicate_webhook(data):
     image_id, user_id = await get_image_id_user_id_from_prediction_id(prediction_id)
     try:
         # call face swap with user image link and sd image link
-        face_swap_image_link, fs_image_path = await perform_face_swap_and_save_simple(
+        face_swap_image_url, fs_image_path = await perform_face_swap_and_save_simple(
             target_image_url=sd_image_url,
             source_image_url=user_image_link,
             user_id=user_id,
@@ -156,17 +157,19 @@ async def process_replicate_webhook(data):
         # update the db with the final image link
         await update_db_with_final_image_link(image_id,
                                               sd_image_url=sd_image_url,
-                                              fs_image_url=face_swap_image_link,
+                                              fs_image_url=face_swap_image_url,
                                               final_image_url=final_image_url,
                                               status=constants.SUCCESS)
 
-        await SHAI_FREE_IMAGE_SLACK_BOT.send_message(
-            f"Final Image generated and saved successfully for \n user {user_id} \n image_link: {final_image_url}")
-
         # send image link to the user via email
-        # TODO
-        # user_email = await get_user_email_from_user_id()
-        # send_email_to_user_with_image_link(user_email, face_swap_image_link)
+        user_email = await get_user_email_from_user_id(user_id)
+
+        await SHAI_FREE_IMAGE_SLACK_BOT.send_message(
+            f"Final Image generated and saved successfully for \n user: {user_id} \n user_email: {user_email} \n image_link: {final_image_url}")
+
+
+        send_image_via_gmail(user_email=user_email,image_url=final_image_url)
+
     except Exception as e:
         # update the db with failed status
         await update_db_with_final_image_link(image_id,
