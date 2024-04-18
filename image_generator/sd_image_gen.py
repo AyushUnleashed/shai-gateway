@@ -7,7 +7,7 @@ import httpx
 from image_generator.utils.prompts import MALE_SUPERHERO_PROMPTS, FEMALE_SUPERHERO_PROMPTS
 from image_generator.utils.constants import PROMPT_SUFFIX
 from supabase_tools.handle_image_tb_updates import make_image_db_entry
-
+from utils.config import settings
 
 def get_prompt(gender, style_id):
     try:
@@ -48,7 +48,7 @@ async def call_sd_api_replicate(prompt, user_image_link, pose_image_link):
             "num_inference_steps": 40,
             "controlnet_conditioning_scale": 0
         },
-        "webhook": "https://brave-happily-wahoo.ngrok-free.app/webhook/replicate",
+        "webhook": f"{settings.SHAI_GATEWAY_BACKEND_URL}/webhook/replicate",
         "webhook_events_filter": ["completed"]
     }
 
