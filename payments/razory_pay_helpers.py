@@ -1,5 +1,7 @@
 from supabase_tools.supabase_utils import SUPABASE_CLIENT
 from fastapi import HTTPException
+import os
+import razorpay
 
 def get_razor_pay_prices_from_db(pack_type):
     response = SUPABASE_CLIENT.table('pricing').select('amount').eq('payment_platform', 'RAZOR_PAY').eq('pack_type',
@@ -38,7 +40,6 @@ def get_razor_pay_pack_data(pack_type):
 def create_razor_pay_order(name, email, user_id, pack_type):
     try:
         pack_amount_in_paise = get_razor_pay_pack_data(pack_type)
-        import razorpay
         RAZOR_PAY_ID = os.getenv('RAZOR_PAY_ID')
         RAZOR_PAY_SECRET = os.getenv('RAZOR_PAY_SECRET')
         client = razorpay.Client(auth=(RAZOR_PAY_ID, RAZOR_PAY_SECRET))
