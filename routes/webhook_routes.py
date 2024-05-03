@@ -30,7 +30,7 @@ webhook_router = APIRouter()
 
 
 
-@webhook_router.post("/webhook/razorpay")
+@webhook_router.post("/webhook/razorpay/test")
 async def razorpay_webhook(request: Request, test_mode: bool = True):
     settings.is_razor_pay_test_mode = test_mode
     payload = await request.json()
