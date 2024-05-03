@@ -28,14 +28,18 @@ import utils.constants as constants
 webhook_router = APIRouter()
 
 
-@webhook_router.post("/webhook/razorpay")
-async def razorpay_webhook(request: Request):
+
+
+@webhook_router.post("/webhook/razorpay/test")
+async def razorpay_webhook(request: Request, test_mode: bool = True):
+    settings.is_razor_pay_test_mode = test_mode
     payload = await request.json()
     print("REQUEST data received:", payload)
     # Extract major information
     event_type = payload["event"]
     from utils.utils import convert_unix_to_datetime
     if event_type == "order.paid":
+        logger.info("settings.is_razor_pay_test_mode {} ".format(settings.is_razor_pay_test_mode))
         payment_entity = payload['payload']['payment']['entity']
         order_data = OrderData(
             order_id=payment_entity['order_id'],
@@ -58,6 +62,10 @@ async def razorpay_webhook(request: Request):
             raise e
 
     return {"message": "Webhook received and processed successfully"}
+
+@webhook_router.post("/webhook/razorpay/prod")
+async def razorpay_webhook_prod(request: Request):
+    return await razorpay_webhook(request, test_mode=False)
 
 
 @webhook_router.post("/webhook/lemonsqueezy")
