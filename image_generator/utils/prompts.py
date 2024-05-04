@@ -41,5 +41,27 @@ MALE_SUPERHERO_PROMPTS = {
 }
 
 FEMALE_SUPERHERO_PROMPTS = {
-    1: "Wonderwoman high quality, 4k "
+    1: "Hela: Human Face visible, MCU, High Res, Goddess of Death, iconic helmet, Antler-like structure, Asymmetrical design, Metallic appearance, Sleek and dark, Face-concealing, regal black and green Asgardian attire, swirling dark energy.",
+    2: "Batgirl: Human Face visible, Sleek costume, cowl with bat ears, agile stance, grappling hook in hand, Gotham skyline.",
+    3: "Batwoman: Human Face visible, Military-inspired suit, red bat symbol, stoic expression, utility belt, crimson hair flowing.",
+    4: "Black Canary: Human Face visible, Fishnet stockings, leather jacket, Canary Cry in action, martial arts pose, urban rooftop.",
+    5: "Captain Marvel: Glowing cosmic energy, star-studded suit, flying with fists ablaze, determined expression.",
+    6: "Jean Grey: Telekinetic aura, iconic green and gold costume, floating in mid-air, focused expression.",
+    7: "Scarlet Witch: Scarlet-red mystical aura, flowing red cloak, chaos magic in her hands, intense gaze.",
+    8: "Spider-Woman: Human Face visible, Sleek spider-emblem suit, mid-air acrobatics, venom blasts, determined expression.",
+    9: "Storm: Regal attire, white hair flowing, weather-controlling pose, lightning in the sky, serene expression.",
+    10: "Supergirl: Iconic 'S' emblem, red cape billowing, mid-flight, powerful and confident stance.",
+    11: "Wonder Woman: Amazonian armor, Lasso of Truth in hand, deflecting bullets, warrior princess pose.",
+    12: "Black Widow: Tactical black suit, widow's bite gauntlets, spy pose, Natasha Romanoff's signature.",
+    13: "Captain America (Sharon Carter): Captain America shield, military attire, shield throw pose, focused expression.",
+    14: "Gamora: Green-skinned assassin, dual-bladed sword, combat stance, galaxy backdrop.",
+    15: "Harley Quinn: Harlequin costume, oversized mallet, mischievous grin, chaotic and playful pose.",
+    16: "Hawkeye (Kate Bishop): Human Face visible, Purple archer costume, bow drawn, sharpshooter pose, urban rooftop.",
+    17: "Phoenix (Jean Grey): Fiery Phoenix aura, iconic green and gold costume, levitating, powerful gaze.",
+    18: "Rogue: Green and yellow suit, absorbing powers, flying mid-air, determined expression.",
+    19: "She-Hulk: Green skin, purple outfit, flexing muscles, lawyer attire, confident and strong pose.",
+    20: "Spider-Gwen: Human Face visible, Hooded spider suit, web-swinging pose, urban backdrop, dynamic and agile.",
+    21: "Valkyrie: Asgardian armor, wielding a mystical sword, fierce warrior pose, celestial background.",
+    22: "Wasp (Hope van Dyne): Human Face visible, Shrinking mid-air, wings extended, red and black costume, determined expression.",
+    23: "X-23: Female clone of Wolverine, mid-action pose, fierce expression, dual retractable claws extended, black and yellow combat suit with blue accents, standing in a shadowy urban alley, dramatic lighting highlighting her intense focus, hair disheveled"
 }
