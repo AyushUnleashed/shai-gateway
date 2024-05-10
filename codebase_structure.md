@@ -7,18 +7,34 @@
     - Function: `send_dummy_update_paid_user_db_request`
     - Function: `main`
 
-### `database`
+### `image_generator`
 
-- **database\handle_orders_db_updates.py**
-    - Function: `check_existing_order`
-    - Function: `insert_new_order`
+- **image_generator\replicate_face_swap_api_call.py**
+    - Function: `perform_face_swap_and_save_simple`
+    - Function: `main`
 
-- **database\handle_user_db_updates.py**
-    - Function: `delete_user_from_supabase`
-    - Function: `add_user_to_supabase`
+- **image_generator\sd_image_gen.py**
+    - Function: `get_prompt`
+    - Function: `handle_sd_image_generation`
+    - Function: `call_sd_api_replicate`
 
-- **database\supabase_utils.py**
-    - Function: `create_supabase_client`
+- **image_generator\__init__.py**
+
+### `image_generator\utils`
+
+- **image_generator\utils\constants.py**
+    - Function: `set_user_image_path`
+
+- **image_generator\utils\image_gen_utils.py**
+    - Function: `get_all_pose_names`
+
+- **image_generator\utils\prompts.py**
+
+- **image_generator\utils\text_box.py**
+    - Function: `add_text_box`
+    - Function: `main`
+
+- **image_generator\utils\__init__.py**
 
 ### `models`
 
@@ -45,6 +61,19 @@
   - Class: `WebhookPayload`
 
 - **models\__init__.py**
+
+### `notification`
+
+- **notification\gmail_service.py**
+    - Function: `send_email`
+    - Function: `send_image_via_gmail`
+
+- **notification\slackbot.py**
+  - Class: `SlackBot`
+    - Function: `__init__`
+    - Function: `send_message`
+
+- **notification\__init__.py**
 
 ### `payments`
 
@@ -76,6 +105,15 @@
     - Endpoint: `basic_router.get`
       - Path: `/`
       - Function: `read_root`
+    - Endpoint: `basic_router.post`
+      - Path: `/update_paid_user_db`
+      - Function: `update_paid_user_order_with_details`
+    - Endpoint: `basic_router.post`
+      - Path: `/generate_free_image`
+      - Function: `generate_free_image`
+    - Endpoint: `basic_router.post`
+      - Path: `/get_user_credits`
+      - Function: `get_user_credits`
 
 - **routes\payments_routes.py**
     - Endpoint: `payments_router.post`
@@ -102,23 +140,47 @@
     - Endpoint: `webhook_router.post`
       - Path: `/webhook/clerk/prod`
       - Function: `clerk_webhook_prod`
+    - Endpoint: `webhook_router.post`
+      - Path: `/webhook/replicate`
+      - Function: `replicate_webhook`
+    - Function: `process_replicate_webhook`
 
 - **routes\__init__.py**
 
-### `slack_bot`
+### `supabase_tools`
 
-- **slack_bot\slackbot.py**
-  - Class: `SlackBot`
-    - Function: `__init__`
-    - Function: `send_message`
+- **supabase_tools\handle_image_bucket_updates.py**
+    - Function: `handle_supabase_upload`
+    - Function: `get_bucket_image_url`
 
-- **slack_bot\__init__.py**
+- **supabase_tools\handle_image_tb_updates.py**
+    - Function: `make_image_db_entry`
+    - Function: `get_image_id_user_id_from_prediction_id`
+    - Function: `update_db_with_final_image_link`
+
+- **supabase_tools\handle_orders_db_updates.py**
+    - Function: `check_existing_order`
+    - Function: `insert_new_order`
+
+- **supabase_tools\handle_user_db_updates.py**
+    - Function: `delete_user_from_supabase`
+    - Function: `add_user_to_supabase`
+    - Function: `get_user_current_credits`
+    - Function: `reduce_user_credits`
+    - Function: `get_user_email_from_user_id`
+
+- **supabase_tools\supabase_utils.py**
+    - Function: `create_supabase_client`
+
+- **supabase_tools\__init__.py**
 
 ### `utils`
 
 - **utils\config.py**
   - Class: `Settings`
     - Function: `__new__`
+
+- **utils\constants.py**
 
 - **utils\give_structure.py**
     - Function: `read_gitignore_specs`
