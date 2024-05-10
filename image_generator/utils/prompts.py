@@ -37,7 +37,8 @@ MALE_SUPERHERO_PROMPTS = {
     36: "Magneto: High Res, Red and purple attire, manipulating metal in the air, magnetic energy radiating, intense and focused.",
     37: "Deadshot (DC Comics): High Res, Human Face visible, Tactical black and red costume, precision aiming with a wrist-mounted firearm, cold and calculating.",
     38: "Carnage: High Res, Human Face visible, Symbiote suit with chaotic tendrils, razor-sharp claws, mid-carnage, malicious and menacing.",
-    39: "Black Adam: High Res, Ancient Egyptian attire, lightning-infused aura, commanding magical powers, regal and powerful."
+    39: "Black Adam: High Res, Ancient Egyptian attire, lightning-infused aura, commanding magical powers, regal and powerful.",
+    40: "Electro: Clad in a green and yellow costume with lightning bolt designs, featuring a jagged, star-shaped mask over his face. His body emits bright yellow electricity, sparking intensely around his hands. His expression is fierce and aggressive, set against a charged, urban night backdrop"
 }
 
 FEMALE_SUPERHERO_PROMPTS = {
