@@ -11,7 +11,7 @@ import json
 from fastapi import APIRouter
 from utils.config import settings
 from models.clerk_webhook_model import ClerkWebhookPayload
-from supabase_tools.handle_user_db_updates import add_user_to_supabase, delete_user_from_supabase, get_user_email_from_user_id
+from supabase_tools.handle_user_db_updates import add_user_to_supabase, get_user_email_from_user_id
 from models.user_model import User
 from fastapi import BackgroundTasks
 
@@ -113,7 +113,7 @@ async def clerk_webhook(request: Request, test_mode: bool = True):
 
         if payload.type == 'user.deleted':
             user_to_be_deleted_id: str = payload.data.id
-            delete_user_from_supabase(user_to_be_deleted_id)
+            # delete_user_from_supabase(user_to_be_deleted_id)
             print(user_to_be_deleted_id)
 
         return {"success": "Webhook received, but no action taken for this event type."}
