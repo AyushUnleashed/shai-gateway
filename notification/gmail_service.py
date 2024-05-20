@@ -59,4 +59,4 @@ if __name__ == "__main__":
     #
     # send_email(subject, body, sender, recipients)
     image_url = "https://mvlmexldvleywcfmvzwt.supabase.co/storage/v1/object/public/free-user-images/user_user_2dn0xb5utBAiH2r7f4Pm7929L7f/image_4c5d869a-2563-449c-9282-bc8d56711e75.png?"
-    send_image_via_gmail("ayushyadavytube@gmail.com",image_url)
+    send_image_via_gmail("query.superheroai@gmail.com",image_url)
